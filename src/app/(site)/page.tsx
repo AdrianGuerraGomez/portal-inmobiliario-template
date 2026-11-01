@@ -51,6 +51,14 @@ export default function HomePage() {
               <div>
                 <h3 className="font-heading text-xl font-semibold">{v.title}</h3>
                 <p className="mt-1 text-secondary-foreground/80">{v.text}</p>
+                {"href" in v && v.href && (
+                  <Link
+                    href={v.href}
+                    className="mt-2 inline-flex items-center gap-1 text-sm font-semibold underline-offset-4 hover:underline"
+                  >
+                    Saber más <ArrowRightIcon className="size-3.5" aria-hidden />
+                  </Link>
+                )}
               </div>
             </li>
           ))}

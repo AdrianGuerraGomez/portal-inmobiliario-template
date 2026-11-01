@@ -4,6 +4,7 @@ import {
   BathIcon,
   BedDoubleIcon,
   BuildingIcon,
+  CalculatorIcon,
   CheckIcon,
   ChevronRightIcon,
   LeafIcon,
@@ -187,6 +188,14 @@ export function PropertyDetail() {
               <MapPinIcon className="size-4" aria-hidden /> {p.zone}, {p.city}
             </p>
             <PriceTag property={p} size="lg" className="[&>span:first-child]:text-3xl" />
+            {p.operation === "venta" && !closed && brand.modules.financing && brand.mortgagePartner && (
+              <Link
+                href={`/financiacion?precio=${p.price}`}
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary underline-offset-4 hover:underline"
+              >
+                <CalculatorIcon className="size-4" aria-hidden /> Calcula tu hipoteca
+              </Link>
+            )}
           </header>
 
           <dl className="grid grid-cols-2 gap-3 sm:grid-cols-3">

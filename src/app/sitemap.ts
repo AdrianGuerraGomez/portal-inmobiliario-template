@@ -7,7 +7,13 @@ import { siteUrl } from "@/lib/site-url";
 // Con Supabase se leerán los publicados de la base de datos.
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = siteUrl();
-  const pages = ["", "/venta", ...(brand.modules.rentals ? ["/alquiler"] : []), "/contacto"];
+  const pages = [
+    "",
+    "/venta",
+    ...(brand.modules.rentals ? ["/alquiler"] : []),
+    ...(brand.modules.financing && brand.mortgagePartner ? ["/financiacion"] : []),
+    "/contacto",
+  ];
   return [
     ...pages.map((path) => ({ url: `${base}${path}`, changeFrequency: "daily" as const, priority: path ? 0.8 : 1 })),
     ...seedSummaries().map((p) => ({

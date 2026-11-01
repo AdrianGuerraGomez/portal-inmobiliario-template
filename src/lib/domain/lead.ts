@@ -2,13 +2,14 @@ import { z } from "zod";
 
 // Mensaje del formulario de contacto (web pública → panel).
 
-export const LEAD_REASONS = ["informacion", "visita", "vender", "otro"] as const;
+export const LEAD_REASONS = ["informacion", "visita", "vender", "hipoteca", "otro"] as const;
 export type LeadReason = (typeof LEAD_REASONS)[number];
 
 export const LEAD_REASON_LABELS: Record<LeadReason, string> = {
   informacion: "Pedir información",
   visita: "Concertar una visita",
   vender: "Vender mi casa",
+  hipoteca: "Financiación / hipoteca",
   otro: "Otro motivo",
 };
 

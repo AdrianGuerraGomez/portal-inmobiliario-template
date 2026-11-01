@@ -19,8 +19,15 @@ export type BrandConfig = {
     offices: { name: string; address: string; phone: string; hours: string }[];
     social: { facebook?: string; instagram?: string };
   };
+  // Empresa de hipotecas con la que colabora (página /financiacion). null si no hay.
+  mortgagePartner: {
+    name: string;
+    url: string;
+    contacts: { name: string; role: string; phone: string }[];
+  } | null;
   modules: {
     rentals: boolean;
+    financing: boolean;
     video: boolean;
     editableContent: boolean;
     auditLog: boolean;
@@ -35,13 +42,13 @@ export type BrandConfig = {
 };
 
 export const brand: BrandConfig = {
-  name: "Casablanca Inmobiliarias",
-  legalName: "Casablanca Inmobiliarias S.L.",
+  name: "Casa Blanca Inmobiliaria",
+  legalName: "Casa Blanca Inmobiliaria", // razón social completa: pendiente de confirmar
   description: "Pisos, casas y locales en venta y alquiler en Guadalajara.",
   locale: "es-ES",
   currency: "EUR",
   referencePrefix: "CB",
-  logo: { src: "/brand/logo.svg", alt: "Casablanca Inmobiliarias", width: 160, height: 40 },
+  logo: { src: "/brand/logo.svg", alt: "Casa Blanca Inmobiliaria", width: 160, height: 40 },
   city: "Guadalajara",
   contact: {
     email: "",
@@ -55,8 +62,17 @@ export const brand: BrandConfig = {
       instagram: "https://www.instagram.com/casa.blanca.inmobiliaria/",
     },
   },
+  mortgagePartner: {
+    name: "CB Hipotecas",
+    url: "https://www.cbhipotecas.com",
+    contacts: [
+      { name: "Jénnifer Sánchez", role: "Asesora financiera", phone: "641 239 763" },
+      { name: "Miguel Sánchez", role: "Director financiero", phone: "670 109 437" },
+    ],
+  },
   modules: {
     rentals: true,
+    financing: true,
     video: true,
     editableContent: true,
     auditLog: true,

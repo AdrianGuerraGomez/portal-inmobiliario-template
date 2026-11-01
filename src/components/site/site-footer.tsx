@@ -1,7 +1,8 @@
 import { MapPinIcon, PhoneIcon } from "lucide-react";
 import Link from "next/link";
 import { brand } from "@/config/brand";
-import { telHref } from "./nav";
+import { SITE_NAV, telHref } from "./nav";
+import { SocialLinks } from "./social-links";
 
 const LEGAL = [
   { href: "/aviso-legal", label: "Aviso legal" },
@@ -10,10 +11,10 @@ const LEGAL = [
 ];
 
 export function SiteFooter() {
-  const { offices, social, email } = brand.contact;
+  const { offices, email } = brand.contact;
   return (
     <footer className="bg-primary text-primary-foreground">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-[1.2fr_2fr]">
+      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-[1.3fr_0.7fr_2fr]">
         <div className="space-y-3">
           <p className="font-heading text-2xl font-semibold">{brand.name}</p>
           <p className="max-w-xs text-sm text-primary-foreground/75">{brand.description}</p>
@@ -22,19 +23,19 @@ export function SiteFooter() {
               {email}
             </a>
           )}
-          <div className="flex gap-4 pt-2 text-sm">
-            {social.facebook && (
-              <a href={social.facebook} target="_blank" rel="noopener noreferrer" className="hover:text-cta">
-                Facebook
-              </a>
-            )}
-            {social.instagram && (
-              <a href={social.instagram} target="_blank" rel="noopener noreferrer" className="hover:text-cta">
-                Instagram
-              </a>
-            )}
-          </div>
+          <SocialLinks className="pt-2" />
         </div>
+        <nav aria-label="Pie de página">
+          <ul className="space-y-2 text-sm">
+            {SITE_NAV.map((item) => (
+              <li key={item.label}>
+                <Link href={item.href} className="text-primary-foreground/75 hover:text-primary-foreground">
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
         <ul className="grid gap-8 sm:grid-cols-2">
           {offices.map((o) => (
             <li key={o.name} className="space-y-2 text-sm">
