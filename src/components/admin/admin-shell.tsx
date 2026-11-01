@@ -5,6 +5,7 @@ import {
   ChevronDownIcon,
   ClipboardListIcon,
   ExternalLinkIcon,
+  HouseIcon,
   HistoryIcon,
   InboxIcon,
   LogOutIcon,
@@ -77,7 +78,7 @@ function NavLinks({
             onClick={onNavigate}
             aria-current={active ? "page" : undefined}
             className={cn(
-              "flex min-h-10 items-center gap-2 rounded-md px-3 text-sm font-medium transition-colors",
+              "flex min-h-10 shrink-0 items-center gap-2 rounded-md px-3 text-sm font-medium whitespace-nowrap transition-colors",
               active
                 ? "bg-secondary text-secondary-foreground"
                 : "text-muted-foreground hover:bg-muted hover:text-foreground",
@@ -117,14 +118,14 @@ export function AdminShell({ children }: { children: ReactNode }) {
     <div className="flex min-h-full flex-1 flex-col bg-muted">
       {isDemo && (
         <p className="bg-secondary px-4 py-1.5 text-center text-xs text-secondary-foreground">
-          Modo demo · Los cambios se guardan solo en este navegador.
+          Modo demo<span className="max-sm:hidden"> · Los cambios se guardan solo en este navegador</span>
         </p>
       )}
       <header className="sticky top-0 z-30 border-b bg-card">
         <div className="mx-auto flex h-14 max-w-6xl items-center gap-4 px-4">
           <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon-lg" className="md:hidden" aria-label="Abrir menú">
+              <Button variant="ghost" size="icon-lg" className="lg:hidden" aria-label="Abrir menú">
                 <MenuIcon />
               </Button>
             </SheetTrigger>
@@ -140,32 +141,37 @@ export function AdminShell({ children }: { children: ReactNode }) {
             </SheetContent>
           </Sheet>
 
-          <Link href="/admin/inmuebles" className="min-w-0 truncate font-heading text-lg font-semibold">
-            {brand.name}
+          <Link
+            href="/admin/inmuebles"
+            aria-label={`${brand.name}: inicio del panel`}
+            title={brand.name}
+            className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground transition-colors hover:bg-primary/85"
+          >
+            <HouseIcon className="size-5" aria-hidden />
           </Link>
 
-          <div className="hidden md:block">
+          <div className="hidden min-w-0 lg:block">
             <Suspense>
               <NavLinks isAdmin={session?.role === "admin"} />
             </Suspense>
           </div>
 
-          <Button asChild variant="ghost" size="lg" className="ml-auto hidden sm:inline-flex">
-            <Link href="/" target="_blank">
-              <ExternalLinkIcon /> Ver web
+          <Button asChild variant="ghost" size="lg" className="ml-auto hidden shrink-0 sm:inline-flex">
+            <Link href="/" target="_blank" aria-label="Ver web" title="Ver web">
+              <ExternalLinkIcon /> <span className="hidden xl:inline">Ver web</span>
             </Link>
           </Button>
           <div className="shrink-0 max-sm:ml-auto">
             {!session || !other ? (
-              <Skeleton className="h-9 w-9 rounded-full sm:w-36" />
+              <Skeleton className="h-9 w-16 rounded-full xl:w-40" />
             ) : (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="lg" className="gap-2">
+                  <Button variant="ghost" size="lg" className="gap-2" aria-label={`Cuenta de ${session.name}`}>
                     <span className="flex size-7 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">
                       {session.name.charAt(0)}
                     </span>
-                    <span className="hidden sm:inline">{session.name}</span>
+                    <span className="hidden whitespace-nowrap xl:inline">{session.name}</span>
                     <ChevronDownIcon className="text-muted-foreground" aria-hidden />
                   </Button>
                 </DropdownMenuTrigger>

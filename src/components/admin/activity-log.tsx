@@ -59,7 +59,7 @@ function EntryItem({ entry, onRevert }: { entry: AuditEntry; onRevert: (e: Audit
         : null;
   return (
     <li className="space-y-3 rounded-lg border bg-card p-4">
-      <div className="flex flex-wrap items-start gap-3">
+      <div className="flex items-start gap-3">
         <span
           className={cn(
             "flex size-9 shrink-0 items-center justify-center rounded-full text-sm font-semibold",
@@ -71,11 +71,19 @@ function EntryItem({ entry, onRevert }: { entry: AuditEntry; onRevert: (e: Audit
         >
           {entry.actor.name.charAt(0)}
         </span>
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0 flex-1 space-y-0.5">
           <p className="text-sm">
             <span className="font-semibold">{entry.actor.name}</span>{" "}
-            <span className="text-muted-foreground">({ROLE_LABELS[entry.actor.role]})</span> ·{" "}
+            <span className="text-muted-foreground">({ROLE_LABELS[entry.actor.role]})</span>
+          </p>
+          <p className="text-sm">
             <span className="font-medium">{ACTION_LABELS[entry.action]}</span>
+            <span className="text-muted-foreground">
+              {" · "}
+              <time dateTime={entry.at} className="tabular-nums">
+                {timeFmt.format(new Date(entry.at))}
+              </time>
+            </span>
           </p>
           {href ? (
             <Link href={href} className="block truncate text-sm text-primary hover:underline">
@@ -85,42 +93,31 @@ function EntryItem({ entry, onRevert }: { entry: AuditEntry; onRevert: (e: Audit
             <p className="truncate text-sm text-muted-foreground">{entry.entityLabel}</p>
           )}
         </div>
-        <time dateTime={entry.at} className="text-xs text-muted-foreground tabular-nums">
-          {timeFmt.format(new Date(entry.at))}
-        </time>
         {canRevert(entry) && (
-          <Button variant="ghost" size="lg" onClick={() => onRevert(entry)}>
-            <Undo2Icon /> Deshacer
+          <Button variant="ghost" size="lg" className="shrink-0 max-sm:px-2.5" onClick={() => onRevert(entry)}>
+            <Undo2Icon /> <span className="max-sm:sr-only">Deshacer</span>
           </Button>
         )}
       </div>
       {changes.length > 0 && (
-        <table className="w-full text-sm">
-          <caption className="sr-only">Cambios</caption>
-          <thead className="sr-only">
-            <tr>
-              <th>Campo</th>
-              <th>Antes</th>
-              <th>Después</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y">
-            {changes.map((c) => (
-              <tr key={c.key} className="align-top">
-                <th scope="row" className="w-1/4 py-2 pr-3 text-left font-medium text-muted-foreground">
-                  {c.label}
-                </th>
-                <td className="py-2 pr-2 text-muted-foreground line-through decoration-1 [overflow-wrap:anywhere]">
+        <dl className="divide-y text-sm">
+          {changes.map((c) => (
+            <div key={c.key} className="grid gap-1 py-2 sm:grid-cols-[minmax(9rem,25%)_1fr] sm:gap-3">
+              <dt className="font-medium text-muted-foreground">{c.label}</dt>
+              <dd className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1">
+                <span className="text-muted-foreground line-through decoration-1 [overflow-wrap:anywhere]">
+                  <span className="sr-only">Antes: </span>
                   {c.from}
-                </td>
-                <td className="w-6 py-2 text-muted-foreground" aria-hidden>
-                  <ArrowRightIcon className="mt-0.5 size-3.5" />
-                </td>
-                <td className="py-2 pl-2 font-medium [overflow-wrap:anywhere]">{c.to}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                </span>
+                <ArrowRightIcon className="size-3.5 shrink-0 self-center text-muted-foreground" aria-hidden />
+                <span className="font-medium [overflow-wrap:anywhere]">
+                  <span className="sr-only">Después: </span>
+                  {c.to}
+                </span>
+              </dd>
+            </div>
+          ))}
+        </dl>
       )}
     </li>
   );
