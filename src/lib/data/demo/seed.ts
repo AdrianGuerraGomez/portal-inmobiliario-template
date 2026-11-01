@@ -6,7 +6,7 @@ import { formatReference, propertySlug } from "@/lib/domain/slug";
 
 // Inmuebles de ejemplo. Sube SEED_VERSION al cambiarlos: el navegador
 // borra los datos de demo viejos y carga estos.
-export const SEED_VERSION = 4;
+export const SEED_VERSION = 5;
 
 type SeedItem = {
   input: PropertyInput;
@@ -80,6 +80,7 @@ const items: SeedItem[] = [
       zone: "Centro",
       city: "Guadalajara",
       postalCode: "19001",
+      location: { lat: 40.6331, lng: -3.1662 },
       published: true,
       featured: true,
     },
@@ -104,6 +105,7 @@ const items: SeedItem[] = [
       zone: "Aguas Vivas",
       city: "Guadalajara",
       postalCode: "19005",
+      location: { lat: 40.6388, lng: -3.1841 },
       published: true,
       featured: true,
     },
@@ -126,6 +128,7 @@ const items: SeedItem[] = [
       zone: "Valdeluz",
       city: "Yebes",
       postalCode: "19141",
+      location: { lat: 40.5968, lng: -3.1247 },
       published: true,
       featured: true,
     },
@@ -150,6 +153,7 @@ const items: SeedItem[] = [
       zone: "Los Valles",
       city: "Guadalajara",
       postalCode: "19005",
+      location: { lat: 40.6212, lng: -3.1779 },
       published: true,
     },
   },
@@ -171,6 +175,7 @@ const items: SeedItem[] = [
       zone: "Centro",
       city: "Marchamalo",
       postalCode: "19180",
+      location: { lat: 40.6731, lng: -3.2008 },
       published: true,
     },
   },
@@ -193,6 +198,7 @@ const items: SeedItem[] = [
       zone: "El Balconcillo",
       city: "Guadalajara",
       postalCode: "19004",
+      location: { lat: 40.6418, lng: -3.1552 },
       published: true,
     },
   },
@@ -214,6 +220,7 @@ const items: SeedItem[] = [
       zone: "Centro",
       city: "Azuqueca de Henares",
       postalCode: "19200",
+      location: { lat: 40.5652, lng: -3.2658 },
       published: true,
     },
   },
@@ -236,6 +243,7 @@ const items: SeedItem[] = [
       zone: "Las Lomas",
       city: "Guadalajara",
       postalCode: "19003",
+      location: { lat: 40.6283, lng: -3.1497 },
       published: true,
     },
   },

@@ -10,6 +10,8 @@ export const siteContent = {
     heroImage: "https://images.unsplash.com/photo-1580587771525-78b9dba3b914",
     heroImageAlt: "Fachada de una vivienda unifamiliar blanca con jardín",
     featuredTitle: "Inmuebles destacados",
+    mapTitle: "Dónde están nuestros inmuebles",
+    mapSubtitle: "Guadalajara y alrededores. Pulsa en un precio para ver el inmueble.",
     values: [
       { title: "Conocemos la zona", text: "Dos oficinas en Guadalajara y años vendiendo en cada barrio.", href: "" },
       { title: "Tasación sin coste", text: "Te decimos cuánto vale tu casa antes de ponerla a la venta.", href: "" },

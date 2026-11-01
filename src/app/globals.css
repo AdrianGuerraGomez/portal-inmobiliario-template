@@ -123,3 +123,11 @@
     }
   }
 }
+
+/* Leaflet pinta los enlaces de su azul; dentro de las fichas del mapa heredan el color del tema. */
+.leaflet-container .leaflet-popup-content a {
+  color: inherit;
+}
+.leaflet-container .leaflet-popup-content {
+  margin: 12px;
+}

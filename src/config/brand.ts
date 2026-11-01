@@ -12,6 +12,8 @@ export type BrandConfig = {
   referencePrefix: string;
   logo: { src: string; alt: string; width: number; height: number };
   city: string;
+  // Centro del mapa cuando no hay inmuebles con ubicación.
+  map: { lat: number; lng: number; zoom: number };
   // Valores por defecto. Con el módulo de contenido editable, se cambian desde el panel.
   contact: {
     email: string;
@@ -50,6 +52,7 @@ export const brand: BrandConfig = {
   referencePrefix: "CB",
   logo: { src: "/brand/logo.svg", alt: "Casa Blanca Inmobiliaria", width: 160, height: 40 },
   city: "Guadalajara",
+  map: { lat: 40.6286, lng: -3.1618, zoom: 12 },
   contact: {
     email: "",
     whatsapp: "",

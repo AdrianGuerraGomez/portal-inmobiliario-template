@@ -1,7 +1,8 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SaveIcon } from "lucide-react";
+import { SaveIcon, XIcon } from "lucide-react";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useEffect, useId } from "react";
 import {
@@ -50,6 +51,12 @@ type Props = { property?: Property };
 
 const toNumber = (v: unknown) => (v === "" || v == null ? Number.NaN : Number(v));
 const toNullableNumber = (v: unknown) => (v === "" || v == null ? null : Number(v));
+// Leaflet usa window: se carga solo en el navegador.
+const LocationPickerMap = dynamic(() => import("./location-picker-map"), {
+  ssr: false,
+  loading: () => <div className="size-full animate-pulse bg-muted" />,
+});
+
 const toNullableText = (v: unknown) => (typeof v === "string" && v.trim() === "" ? null : v);
 
 function emptyValues(): PropertyInput {
@@ -70,6 +77,7 @@ function emptyValues(): PropertyInput {
     zone: "",
     city: brand.city,
     postalCode: null,
+    location: null,
     published: false,
     featured: false,
   };
@@ -389,6 +397,30 @@ export function PropertyForm({ property }: Props) {
               error={errors.postalCode}
             />
           </div>
+          <Controller
+            control={control}
+            name="location"
+            render={({ field }) => (
+              <Field className="mt-6">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <FieldLabel>Punto en el mapa</FieldLabel>
+                  {field.value && (
+                    <Button type="button" variant="ghost" size="sm" onClick={() => field.onChange(null)}>
+                      <XIcon /> Quitar punto
+                    </Button>
+                  )}
+                </div>
+                <div className="isolate h-72 overflow-hidden rounded-lg border">
+                  <LocationPickerMap value={field.value ?? null} onChange={field.onChange} />
+                </div>
+                <FieldDescription>
+                  {field.value
+                    ? "Arrastra el punto para moverlo. Pon la calle o la manzana, no el portal exacto."
+                    : "Pulsa en el mapa para colocar el inmueble. Sin punto, no aparece en el mapa de la portada."}
+                </FieldDescription>
+              </Field>
+            )}
+          />
         </CardContent>
       </Card>
 

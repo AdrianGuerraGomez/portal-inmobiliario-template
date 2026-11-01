@@ -131,6 +131,11 @@ export const propertyInputSchema = z.object({
     .regex(/^\d{5}$/, "Código postal de 5 cifras")
     .nullable()
     .default(null),
+  // Punto aproximado para el mapa de la web (no la dirección exacta).
+  location: z
+    .object({ lat: z.number().min(-90).max(90), lng: z.number().min(-180).max(180) })
+    .nullable()
+    .default(null),
   published: z.boolean().default(false),
   featured: z.boolean().default(false),
 });

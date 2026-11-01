@@ -35,6 +35,7 @@ const PROPERTY_FIELD_LABELS: Record<string, string> = {
   zone: "Zona",
   city: "Municipio",
   postalCode: "Código postal",
+  location: "Ubicación en el mapa",
   published: "Publicado en la web",
   featured: "Destacado",
   status: "Estado",
@@ -76,6 +77,11 @@ export function formatValue(key: string, value: unknown): string {
         : "Ninguna";
     case "media":
       return typeof value === "number" ? `${value} archivos` : String(value);
+    case "location":
+      if (value && typeof value === "object" && "lat" in value && "lng" in value) {
+        return `${(value as { lat: number }).lat}, ${(value as { lng: number }).lng}`;
+      }
+      return "—";
     case "priceReducedAt":
     case "closedAt":
       return formatDateTime(String(value));

@@ -7,6 +7,7 @@ import { useContentImage, useSiteContent } from "@/lib/content/use-content";
 import { imageSrc, imageSrcSet } from "@/lib/media/image-url";
 import { FeaturedProperties } from "./featured-properties";
 import { HeroSearch } from "./hero-search";
+import { MapSection } from "./map-section";
 
 export function HomeView() {
   const c = useSiteContent().home;
@@ -42,6 +43,8 @@ export function HomeView() {
         </div>
         <FeaturedProperties />
       </section>
+
+      <MapSection />
 
       <section className="bg-secondary">
         <ul className="mx-auto grid max-w-7xl gap-8 px-4 py-14 sm:px-6 md:grid-cols-3">

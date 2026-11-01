@@ -57,6 +57,8 @@ export const CONTENT_GROUPS: ContentGroup[] = [
         hint: "Para personas que no ven la imagen y para Google.",
       },
       { path: "home.featuredTitle", label: "Título de destacados", kind: "text", max: 40 },
+      { path: "home.mapTitle", label: "Mapa: título", kind: "text", max: 50 },
+      { path: "home.mapSubtitle", label: "Mapa: subtítulo", kind: "textarea", max: 140 },
       ...home.values.flatMap((_, i) => [
         { path: `home.values.${i}.title`, label: `Ventaja ${i + 1}: título`, kind: "text" as const, max: 40 },
         { path: `home.values.${i}.text`, label: `Ventaja ${i + 1}: texto`, kind: "textarea" as const, max: 120 },

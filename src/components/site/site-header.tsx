@@ -13,7 +13,7 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-6 px-4 sm:px-6">
-        <Link href="/" className="min-w-0 truncate font-heading text-xl font-semibold tracking-tight">
+        <Link href="/" className="min-w-0 truncate font-heading text-lg font-semibold tracking-tight sm:text-xl">
           {brand.name}
         </Link>
         <nav aria-label="Principal" className="ml-4 hidden items-center gap-1 lg:flex">
