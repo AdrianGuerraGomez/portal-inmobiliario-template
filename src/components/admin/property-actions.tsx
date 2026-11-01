@@ -3,6 +3,7 @@
 import {
   BadgePercentIcon,
   CircleDotIcon,
+  ExternalLinkIcon,
   EyeIcon,
   EyeOffIcon,
   MoreHorizontalIcon,
@@ -76,6 +77,13 @@ export function PropertyActions({ property, variant = "row", showEdit = true }: 
             <DropdownMenuItem asChild>
               <Link href={`/admin/inmuebles/${property.id}`}>
                 <PencilIcon /> Editar
+              </Link>
+            </DropdownMenuItem>
+          )}
+          {property.published && !property.deletedAt && (
+            <DropdownMenuItem asChild>
+              <Link href={`/inmueble/${property.slug}`} target="_blank">
+                <ExternalLinkIcon /> Ver en la web
               </Link>
             </DropdownMenuItem>
           )}

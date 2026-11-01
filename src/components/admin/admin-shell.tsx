@@ -3,6 +3,8 @@
 import {
   Building2Icon,
   ChevronDownIcon,
+  ExternalLinkIcon,
+  InboxIcon,
   LogOutIcon,
   MenuIcon,
   RotateCcwIcon,
@@ -44,6 +46,7 @@ import { cn } from "@/lib/utils";
 
 const NAV = [
   { href: "/admin/inmuebles", label: "Inmuebles", icon: Building2Icon },
+  { href: "/admin/contactos", label: "Contactos", icon: InboxIcon },
   { href: "/admin/papelera", label: "Papelera", icon: Trash2Icon },
 ];
 
@@ -133,7 +136,12 @@ export function AdminShell({ children }: { children: ReactNode }) {
             </Suspense>
           </div>
 
-          <div className="ml-auto shrink-0">
+          <Button asChild variant="ghost" size="lg" className="ml-auto hidden sm:inline-flex">
+            <Link href="/" target="_blank">
+              <ExternalLinkIcon /> Ver web
+            </Link>
+          </Button>
+          <div className="shrink-0 max-sm:ml-auto">
             {!session || !other ? (
               <Skeleton className="h-9 w-9 rounded-full sm:w-36" />
             ) : (

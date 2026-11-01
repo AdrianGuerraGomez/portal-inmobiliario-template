@@ -47,8 +47,8 @@ export default function StyleguidePage() {
         <h2 className="text-2xl font-semibold">Tipografía</h2>
         <p className="font-heading text-5xl">Ático con terraza en el centro</p>
         <p className="max-w-prose text-lg">
-          Texto de cuerpo. Piso luminoso de 3 habitaciones y 2 baños, reformado, con ascensor y
-          plaza de garaje. A cinco minutos del centro de {brand.defaults.city}.
+          Texto de cuerpo. Piso luminoso de 3 habitaciones y 2 baños, reformado, con ascensor y plaza de garaje. A cinco
+          minutos del centro de {brand.city}.
         </p>
         <p className="text-sm text-muted-foreground">Texto secundario · Ref. CB-0123</p>
       </section>
@@ -56,11 +56,19 @@ export default function StyleguidePage() {
       <section className="space-y-4">
         <h2 className="text-2xl font-semibold">Botones</h2>
         <div className="flex flex-wrap gap-3">
-          <Button size="lg" variant="cta">Pedir visita</Button>
+          <Button size="lg" variant="cta">
+            Pedir visita
+          </Button>
           <Button size="lg">Ver inmuebles</Button>
-          <Button size="lg" variant="secondary">Secundario</Button>
-          <Button size="lg" variant="outline">Contorno</Button>
-          <Button size="lg" variant="ghost">Fantasma</Button>
+          <Button size="lg" variant="secondary">
+            Secundario
+          </Button>
+          <Button size="lg" variant="outline">
+            Contorno
+          </Button>
+          <Button size="lg" variant="ghost">
+            Fantasma
+          </Button>
         </div>
       </section>
 
@@ -68,10 +76,7 @@ export default function StyleguidePage() {
         <h2 className="text-2xl font-semibold">Estados de inmueble</h2>
         <div className="flex flex-wrap gap-2">
           {statuses.map((s) => (
-            <span
-              key={s.label}
-              className={`rounded-full px-3 py-1 text-xs font-semibold text-white ${s.className}`}
-            >
+            <span key={s.label} className={`rounded-full px-3 py-1 text-xs font-semibold text-white ${s.className}`}>
               {s.label}
             </span>
           ))}

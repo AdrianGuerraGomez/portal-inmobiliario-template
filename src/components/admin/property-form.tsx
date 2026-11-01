@@ -68,7 +68,7 @@ function emptyValues(): PropertyInput {
     energyRating: "en_tramite",
     address: "",
     zone: "",
-    city: brand.defaults.city,
+    city: brand.city,
     postalCode: null,
     published: false,
     featured: false,

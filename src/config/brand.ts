@@ -11,11 +11,13 @@ export type BrandConfig = {
   currency: string;
   referencePrefix: string;
   logo: { src: string; alt: string; width: number; height: number };
-  defaults: {
-    phone: string;
+  city: string;
+  // Valores por defecto. Con el módulo de contenido editable, se cambian desde el panel.
+  contact: {
     email: string;
-    address: string;
-    city: string;
+    whatsapp: string; // solo dígitos con prefijo, p. ej. 34600000000
+    offices: { name: string; address: string; phone: string; hours: string }[];
+    social: { facebook?: string; instagram?: string };
   };
   modules: {
     rentals: boolean;
@@ -40,11 +42,18 @@ export const brand: BrandConfig = {
   currency: "EUR",
   referencePrefix: "CB",
   logo: { src: "/brand/logo.svg", alt: "Casablanca Inmobiliarias", width: 160, height: 40 },
-  defaults: {
-    phone: "",
+  city: "Guadalajara",
+  contact: {
     email: "",
-    address: "",
-    city: "Guadalajara",
+    whatsapp: "",
+    offices: [
+      { name: "Oficina Avda. Castilla", address: "Avda. Castilla, 18, Guadalajara", phone: "949 410 284", hours: "" },
+      { name: "Oficina Avda. Beleña", address: "Avda. Beleña, 16, Guadalajara", phone: "949 410 344", hours: "" },
+    ],
+    social: {
+      facebook: "https://www.facebook.com/Inmobiliaria-Casa-Blanca-529957037178072/",
+      instagram: "https://www.instagram.com/casa.blanca.inmobiliaria/",
+    },
   },
   modules: {
     rentals: true,

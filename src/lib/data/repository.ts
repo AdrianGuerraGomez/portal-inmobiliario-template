@@ -1,4 +1,5 @@
 import type { AuditEntry } from "@/lib/domain/audit";
+import type { Lead, LeadInput } from "@/lib/domain/lead";
 import type { Operation, Property, PropertyInput, PropertyStatus, PropertyType } from "@/lib/domain/property";
 
 // Contrato de la capa de datos. Hoy: demo en el navegador.
@@ -53,6 +54,11 @@ export interface Repository {
   mediaUrl(path: string, source: Property["media"][number]["source"]): Promise<string>;
 
   listAudit(filter?: AuditFilter): Promise<AuditEntry[]>;
+
+  // Mensajes del formulario de contacto. createLead es lo único que la web pública escribe.
+  createLead(input: LeadInput): Promise<Lead>;
+  listLeads(): Promise<Lead[]>;
+  setLeadStatus(id: string, status: Lead["status"]): Promise<Lead>;
 
   // Avisa cuando cambian los datos (otra pestaña incluida).
   subscribe(listener: () => void): () => void;

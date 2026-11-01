@@ -2,6 +2,7 @@ import { z } from "zod";
 import { brand } from "@/config/brand";
 import { diff, type Actor, type AuditAction, type AuditEntry, type FieldChange } from "@/lib/domain/audit";
 import { DomainError } from "@/lib/domain/errors";
+import { leadInputSchema, type Lead } from "@/lib/domain/lead";
 import { assertFileAllowed, assertMediaCount } from "@/lib/domain/media-rules";
 import {
   CLOSED_STATUS,
@@ -66,11 +67,12 @@ export function createDemoRepository({ getActor, dbName }: Options): DemoReposit
   }
 
   async function seed(db: DemoDB) {
-    const tx = db.transaction(["properties", "blobs", "audit", "meta"], "readwrite");
+    const tx = db.transaction(["properties", "blobs", "audit", "leads", "meta"], "readwrite");
     await Promise.all([
       tx.objectStore("properties").clear(),
       tx.objectStore("blobs").clear(),
       tx.objectStore("audit").clear(),
+      tx.objectStore("leads").clear(),
       tx.objectStore("meta").clear(),
     ]);
     const items = seedProperties();
@@ -345,6 +347,49 @@ export function createDemoRepository({ getActor, dbName }: Options): DemoReposit
             (!filter.since || e.at >= filter.since),
         )
         .slice(0, filter.limit ?? 200);
+    },
+
+    async createLead(input) {
+      const result = leadInputSchema.safeParse(input);
+      if (!result.success) {
+        throw new DomainError("validation", result.error.issues[0]?.message ?? "Revisa el formulario");
+      }
+      // El campo trampa y el consentimiento no se guardan tal cual (queda consentAt).
+      const data = {
+        name: result.data.name,
+        email: result.data.email,
+        phone: result.data.phone,
+        message: result.data.message,
+        reason: result.data.reason,
+        propertyId: result.data.propertyId,
+      };
+      const property = data.propertyId ? await (await db()).get("properties", data.propertyId) : undefined;
+      const now = new Date().toISOString();
+      const lead: Lead = {
+        ...data,
+        id: crypto.randomUUID(),
+        createdAt: now,
+        consentAt: now,
+        propertyLabel: property ? `${property.reference} · ${property.title}` : null,
+        status: "nuevo",
+      };
+      await (await db()).put("leads", lead);
+      notify();
+      return lead;
+    },
+
+    async listLeads() {
+      return (await (await db()).getAllFromIndex("leads", "createdAt")).reverse();
+    },
+
+    async setLeadStatus(id, status) {
+      const d = await db();
+      const lead = await d.get("leads", id);
+      if (!lead) throw new DomainError("not_found", "Mensaje no encontrado");
+      const next = { ...lead, status };
+      await d.put("leads", next);
+      notify();
+      return next;
     },
 
     subscribe(listener) {

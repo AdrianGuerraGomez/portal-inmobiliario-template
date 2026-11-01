@@ -50,6 +50,7 @@ import { useAction } from "@/lib/data/use-action";
 import { DomainError } from "@/lib/domain/errors";
 import { assertFileAllowed, assertMediaCount, IMAGE_TYPES, VIDEO_TYPES } from "@/lib/domain/media-rules";
 import type { Property, PropertyMedia } from "@/lib/domain/property";
+import { imageSrc } from "@/lib/media/image-url";
 import { normalizedType, processImage } from "@/lib/media/process-image";
 import { formatBytes } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -93,7 +94,7 @@ function PhotoTile({
     >
       {url ? (
         // eslint-disable-next-line @next/next/no-img-element -- blob: locales
-        <img src={url} alt={alt} className="aspect-4/3 w-full object-cover" />
+        <img src={imageSrc(url, 600)} alt={alt} className="aspect-4/3 w-full object-cover" />
       ) : (
         <div className="aspect-4/3 w-full animate-pulse bg-muted" />
       )}

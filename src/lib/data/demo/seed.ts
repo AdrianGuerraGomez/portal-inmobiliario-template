@@ -4,7 +4,7 @@ import { formatReference, propertySlug } from "@/lib/domain/slug";
 
 // Inmuebles de ejemplo. Sube SEED_VERSION al cambiarlos: el navegador
 // borra los datos de demo viejos y carga estos.
-export const SEED_VERSION = 1;
+export const SEED_VERSION = 3;
 
 type SeedItem = {
   input: PropertyInput;
@@ -12,6 +12,51 @@ type SeedItem = {
   previousPrice?: number;
   daysAgo: number;
 };
+
+// Fotos de Unsplash (licencia libre, uso comercial permitido). Mismo orden que `items`.
+const UNSPLASH = "https://images.unsplash.com/photo-";
+const photos: string[][] = [
+  [
+    "1493246318656-5bfd4cfb29b8",
+    "1502672260266-1c1ef2d93688",
+    "1556911220-bff31c812dba",
+    "1616594039964-ae9021a400a0",
+    "1584622650111-993a426fbf0a",
+  ],
+  [
+    "1514895413746-feb3d266273d",
+    "1522708323590-d24dbb6b0267",
+    "1484154218962-a197022b5858",
+    "1505693416388-ac5ce068fe85",
+    "1631889993959-41b4e9c6e3c5",
+  ],
+  [
+    "1613977257365-aaae5a9817ff",
+    "1613490493576-7fde63acd811",
+    "1600596542815-ffad4c1539a9",
+    "1617228069096-4638a7ffc906",
+    "1616486029423-aaa4789e8c9a",
+    "1620626011761-996317b8d101",
+  ],
+  [
+    "1583847268964-b28dc8f51f92",
+    "1600489000022-c2086d79f9d4",
+    "1615874959474-d609969a20ed",
+    "1507652313519-d4e9174996dd",
+  ],
+  ["1570129477492-45c003edd2be", "1560448204-e02f11c3d0e2", "1522771739844-6a9f6d5f14af"],
+  ["1560185893-a55cbc8c57e8", "1586023492125-27b2c045efd7", "1612320648993-61c1cd604b71"],
+  ["1731611538351-722bb062ec0e", "1582570705862-93fdac879b4a"],
+  [
+    "1564078516393-cf04bd966897",
+    "1585128792020-803d29415281",
+    "1565538810643-b5bdb714032a",
+    "1757417983938-2c2a931d41aa",
+    "1661107259637-4e1c55462428",
+  ],
+];
+
+export const HERO_IMAGE = `${UNSPLASH}1580587771525-78b9dba3b914`;
 
 const items: SeedItem[] = [
   {
@@ -194,6 +239,19 @@ const items: SeedItem[] = [
   },
 ];
 
+// Datos fijos (sin fechas) para el servidor: rutas, títulos de página y sitemap.
+export function seedSummaries() {
+  return items.map((item, i) => {
+    const reference = formatReference(brand.referencePrefix, i + 1);
+    return {
+      slug: propertySlug(item.input.title, reference),
+      title: item.input.title,
+      description: item.input.description,
+      cover: photos[i]?.[0] ? `${UNSPLASH}${photos[i][0]}` : null,
+    };
+  });
+}
+
 // Fechas relativas a hoy para que la demo siempre parezca reciente.
 export function seedProperties(now = new Date()): Property[] {
   return items.map((item, i) => {
@@ -215,7 +273,18 @@ export function seedProperties(now = new Date()): Property[] {
       createdAt: created,
       updatedAt: created,
       updatedBy: null,
-      media: [],
+      media: (photos[i] ?? []).map((id, position) => ({
+        id: `demo-${i + 1}-${position + 1}`,
+        kind: "image" as const,
+        source: "static" as const,
+        path: `${UNSPLASH}${id}`,
+        position,
+        alt: `${data.title}, foto ${position + 1}`,
+        width: null,
+        height: null,
+        sizeBytes: 0,
+        mimeType: "image/jpeg",
+      })),
     };
   });
 }

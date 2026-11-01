@@ -47,7 +47,10 @@ export function useRepoQuery<T>(query: (repo: Repository) => Promise<T>, deps: u
     const run = () =>
       query(repo).then(
         (data) => active && setState({ data, error: null, loading: false }),
-        (error: Error) => active && setState((s) => ({ ...s, error, loading: false })),
+        (error: Error) => {
+          console.error("[repo]", error);
+          if (active) setState((s) => ({ ...s, error, loading: false }));
+        },
       );
     run();
     const unsubscribe = repo.subscribe(run);

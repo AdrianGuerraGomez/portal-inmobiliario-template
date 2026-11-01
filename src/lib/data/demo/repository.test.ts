@@ -142,6 +142,29 @@ describe("fotos y vídeo", () => {
   });
 });
 
+describe("contactos", () => {
+  const lead = {
+    name: "Ana López",
+    email: "ana@example.com",
+    message: "Me interesa visitar el piso esta semana.",
+    consent: true as const,
+  };
+
+  it("guarda el mensaje con el inmueble y sin el campo trampa", async () => {
+    const saved = await repo.createLead({ ...lead, propertyId: "demo-1", reason: "visita" });
+    expect(saved).toMatchObject({ status: "nuevo", propertyLabel: expect.stringContaining("CB-0001") });
+    expect(saved).not.toHaveProperty("website");
+    const [first] = await repo.listLeads();
+    expect(first.id).toBe(saved.id);
+    expect((await repo.setLeadStatus(saved.id, "atendido")).status).toBe("atendido");
+  });
+
+  it("exige consentimiento y bloquea bots", async () => {
+    await expect(repo.createLead({ ...lead, consent: false as unknown as true })).rejects.toThrow(/permiso/);
+    await expect(repo.createLead({ ...lead, website: "http://spam" })).rejects.toThrow();
+  });
+});
+
 describe("histórico", () => {
   it("registra quién cambió qué, con antes y después", async () => {
     const p = await repo.createProperty(input);
