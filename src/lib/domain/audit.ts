@@ -23,6 +23,7 @@ export type AuditAction =
   | "media_remove"
   | "media_reorder"
   | "content_publish"
+  | "revert"
   | "reset";
 
 export type FieldChange = { from: unknown; to: unknown };
@@ -50,6 +51,7 @@ export const ACTION_LABELS: Record<AuditAction, string> = {
   media_remove: "Quitó archivos",
   media_reorder: "Reordenó fotos",
   content_publish: "Publicó cambios en la web",
+  revert: "Deshizo un cambio",
   reset: "Reinició la demo",
 };
 

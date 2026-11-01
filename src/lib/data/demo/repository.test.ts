@@ -206,6 +206,46 @@ describe("contenido editable", () => {
   });
 });
 
+describe("deshacer desde el histórico", () => {
+  const last = async (entityId: string) => (await repo.listAudit({ entityId }))[0];
+
+  it("deshace una edición y lo registra como cambio nuevo", async () => {
+    const p = await repo.createProperty(input);
+    await repo.updateProperty(p.id, { title: "Piso reformado con dos dormitorios", bedrooms: 3 });
+    const edit = await last(p.id);
+    await repo.revertAuditEntry(edit.id);
+    const back = await repo.getProperty(p.id);
+    expect(back).toMatchObject({ title: input.title, bedrooms: 2, slug: p.slug });
+    const entries = await repo.listAudit({ entityId: p.id });
+    expect(entries[0].action).toBe("revert");
+    expect(entries).toHaveLength(3); // crear, editar, deshacer: nada se borra
+  });
+
+  it("deshace una rebaja y un cambio de estado", async () => {
+    const p = await repo.createProperty(input);
+    await repo.applyPriceDrop(p.id, 140000);
+    await repo.revertAuditEntry((await last(p.id)).id);
+    expect(await repo.getProperty(p.id)).toMatchObject({ price: 150000, previousPrice: null });
+    await repo.setStatus(p.id, "vendido");
+    await repo.revertAuditEntry((await last(p.id)).id);
+    expect(await repo.getProperty(p.id)).toMatchObject({ status: "disponible", closedAt: null });
+  });
+
+  it("deshacer un borrado lo restaura", async () => {
+    const p = await repo.createProperty(input);
+    await repo.deleteProperty(p.id);
+    await repo.revertAuditEntry((await last(p.id)).id);
+    expect((await repo.getProperty(p.id))?.deletedAt).toBeNull();
+  });
+
+  it("deshace una publicación de contenido", async () => {
+    await repo.saveContentDraft({ "home.title": "Título nuevo de portada" });
+    await repo.publishContent();
+    await repo.revertAuditEntry((await last("site")).id);
+    expect((await repo.getContentState()).published).toEqual({});
+  });
+});
+
 describe("histórico", () => {
   it("registra quién cambió qué, con antes y después", async () => {
     const p = await repo.createProperty(input);

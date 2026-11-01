@@ -1,10 +1,12 @@
 import { brand } from "@/config/brand";
+import type { AuditEntry } from "@/lib/domain/audit";
+import type { Lead } from "@/lib/domain/lead";
 import { propertyInputSchema, type Property, type PropertyInput, type PropertyStatus } from "@/lib/domain/property";
 import { formatReference, propertySlug } from "@/lib/domain/slug";
 
 // Inmuebles de ejemplo. Sube SEED_VERSION al cambiarlos: el navegador
 // borra los datos de demo viejos y carga estos.
-export const SEED_VERSION = 3;
+export const SEED_VERSION = 4;
 
 type SeedItem = {
   input: PropertyInput;
@@ -287,4 +289,87 @@ export function seedProperties(now = new Date()): Property[] {
       })),
     };
   });
+}
+
+// Actividad y contactos de ejemplo para que el histórico y el resumen no salgan vacíos.
+export function seedActivity(now = new Date()): { audit: AuditEntry[]; leads: Lead[] } {
+  const at = (days: number, hours = 0) => new Date(now.getTime() - days * 86_400_000 - hours * 3_600_000).toISOString();
+  const laura = { id: "demo-admin", name: "Laura Martín", role: "admin" as const };
+  const carlos = { id: "demo-editor", name: "Carlos Ruiz", role: "editor" as const };
+  const props = seedProperties(now);
+  const label = (i: number) => `${props[i].reference} · ${props[i].title}`;
+  const audit: AuditEntry[] = [
+    {
+      id: "seed-audit-1",
+      at: at(6, 3),
+      actor: laura,
+      entity: "property",
+      entityId: props[1].id,
+      entityLabel: label(1),
+      action: "price_drop",
+      changes: { price: { from: 215000, to: 198000 }, previousPrice: { from: null, to: 215000 } },
+    },
+    {
+      id: "seed-audit-2",
+      at: at(4, 5),
+      actor: carlos,
+      entity: "property",
+      entityId: props[7].id,
+      entityLabel: label(7),
+      action: "create",
+      changes: {},
+    },
+    {
+      id: "seed-audit-3",
+      at: at(2, 2),
+      actor: laura,
+      entity: "property",
+      entityId: props[3].id,
+      entityLabel: label(3),
+      action: "status",
+      changes: { status: { from: "disponible", to: "reservado" } },
+    },
+    {
+      id: "seed-audit-4",
+      at: at(1, 4),
+      actor: carlos,
+      entity: "property",
+      entityId: props[0].id,
+      entityLabel: label(0),
+      action: "update",
+      changes: {
+        featured: { from: false, to: true },
+        features: { from: ["ascensor", "garaje", "terraza"], to: props[0].features },
+      },
+    },
+  ];
+  const leads: Lead[] = [
+    {
+      id: "seed-lead-1",
+      name: "María González",
+      email: "maria.gonzalez@example.com",
+      phone: "600 123 456",
+      message: "Hola, me interesa el ático. ¿Se puede ver este sábado por la mañana?",
+      reason: "visita",
+      propertyId: props[0].id,
+      propertyLabel: label(0),
+      createdAt: at(3),
+      consentAt: at(3),
+      status: "nuevo",
+    },
+    {
+      id: "seed-lead-2",
+      name: "Javier Moreno",
+      email: "javier.moreno@example.com",
+      phone: "",
+      message: "Quiero vender mi piso en Los Valles, 90 m² y 3 dormitorios. ¿Me podéis hacer una valoración?",
+      reason: "vender",
+      propertyId: null,
+      propertyLabel: null,
+      createdAt: at(0, 6),
+      consentAt: at(0, 6),
+      status: "nuevo",
+    },
+  ];
+  return { audit, leads };
 }

@@ -64,5 +64,5 @@ Para producción se añade una implementación con Supabase y se pone `NEXT_PUBL
 - [x] Fase 2 · Panel de inmuebles (login demo, listado, crear/editar, fotos y vídeo, rebajas, estados, papelera)
 - [x] Fase 3 · Web pública (portada, listados con filtros, ficha, contacto, legales, SEO) + bandeja de contactos
 - [x] Fase 4 · Contenido editable (textos, imagen de portada, datos de empresa; borrador, vista previa y publicar)
-- [ ] Fase 5 · Histórico de cambios
+- [x] Fase 5 · Histórico de cambios (actividad con antes/después, deshacer, resumen semanal)
 - [ ] Fase 6 · Supabase y producción (cuando el cliente compre)

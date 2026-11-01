@@ -55,6 +55,9 @@ export interface Repository {
   mediaUrl(path: string, source: Property["media"][number]["source"]): Promise<string>;
 
   listAudit(filter?: AuditFilter): Promise<AuditEntry[]>;
+  // Vuelve a poner los valores de antes de un cambio. Queda registrado como un cambio más:
+  // el histórico nunca se edita ni se borra.
+  revertAuditEntry(id: string): Promise<void>;
 
   // Mensajes del formulario de contacto. createLead es lo único que la web pública escribe.
   createLead(input: LeadInput): Promise<Lead>;

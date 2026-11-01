@@ -18,7 +18,7 @@ import {
 import { formatReference, propertySlug, slugify } from "@/lib/domain/slug";
 import type { AuditFilter, MediaUpload, PropertyFilter, Repository } from "../repository";
 import { openDemoDB, type DemoDB } from "./db";
-import { SEED_VERSION, seedProperties } from "./seed";
+import { SEED_VERSION, seedActivity, seedProperties } from "./seed";
 
 type Options = {
   getActor: () => Actor;
@@ -90,6 +90,9 @@ export function createDemoRepository({ getActor, dbName }: Options): DemoReposit
     ]);
     const items = seedProperties();
     for (const p of items) await tx.objectStore("properties").put(p);
+    const activity = seedActivity();
+    for (const e of activity.audit) await tx.objectStore("audit").put(e);
+    for (const l of activity.leads) await tx.objectStore("leads").put(l);
     await tx.objectStore("meta").put(items.length, "counter");
     await tx.objectStore("meta").put(SEED_VERSION, "seedVersion");
     await tx.done;
@@ -159,7 +162,7 @@ export function createDemoRepository({ getActor, dbName }: Options): DemoReposit
     return next;
   }
 
-  return {
+  const repo: DemoRepository = {
     async listProperties(filter: PropertyFilter = {}) {
       const all = await (await db()).getAll("properties");
       const q = filter.search ? normalize(filter.search) : null;
@@ -359,6 +362,94 @@ export function createDemoRepository({ getActor, dbName }: Options): DemoReposit
       return blobUrl(path);
     },
 
+    async revertAuditEntry(id) {
+      const entry = await (await db()).get("audit", id);
+      if (!entry) throw new DomainError("not_found", "Cambio no encontrado");
+
+      if (entry.entity === "content") {
+        if (entry.action !== "content_publish" && entry.action !== "revert") {
+          throw new DomainError("validation", "Este cambio no se puede deshacer.");
+        }
+        const current = await readContent();
+        const published = { ...current.published };
+        const changes: Record<string, FieldChange> = {};
+        for (const [key, c] of Object.entries(entry.changes)) {
+          const back = String(c.from ?? "");
+          const now = published[key] ?? defaultValue(key);
+          if (now === back) continue;
+          if (isAdminOnly(key) && getActor().role !== "admin") {
+            throw new DomainError(
+              "forbidden",
+              "Solo un administrador puede deshacer cambios en los datos de la empresa.",
+            );
+          }
+          if (back === defaultValue(key)) delete published[key];
+          else published[key] = back;
+          changes[key] = { from: now, to: back };
+        }
+        const actor = getActor();
+        const state: ContentState = {
+          ...current,
+          published,
+          publishedAt: new Date().toISOString(),
+          publishedBy: actor.name,
+        };
+        const d = await db();
+        await d.put("meta", state, CONTENT_KEY);
+        await d.put("audit", {
+          id: crypto.randomUUID(),
+          at: nextAt(),
+          actor: { id: actor.id, name: actor.name, role: actor.role },
+          entity: "content",
+          entityId: "site",
+          entityLabel: "Contenido de la web",
+          action: "revert",
+          changes,
+        });
+        notify();
+        return;
+      }
+
+      if (entry.entity !== "property") throw new DomainError("validation", "Este cambio no se puede deshacer.");
+      const current = await mustGet(entry.entityId);
+      if (entry.action === "create" || entry.action === "restore") return repo.deleteProperty(current.id);
+      if (entry.action === "delete") {
+        await repo.restoreProperty(current.id);
+        return;
+      }
+
+      // Edición, estado o rebaja: se vuelven a poner los valores "antes".
+      const inputKeys = new Set(Object.keys(propertyInputSchema.shape));
+      const patch: Record<string, unknown> = {};
+      for (const [key, c] of Object.entries(entry.changes)) if (inputKeys.has(key)) patch[key] = c.from;
+      const data = parseInput({ ...inputOf(current), ...patch });
+      const next: Property = { ...current, ...data };
+      const status = entry.changes.status?.from as PropertyStatus | undefined;
+      if (status) {
+        next.status = status;
+        next.closedAt = status === "vendido" || status === "alquilado" ? new Date().toISOString() : null;
+      }
+      if ("previousPrice" in entry.changes) {
+        const prev = (entry.changes.previousPrice.from as number | null) ?? null;
+        next.previousPrice = prev && prev > next.price ? prev : null;
+        next.priceReducedAt = next.previousPrice ? (current.priceReducedAt ?? new Date().toISOString()) : null;
+      } else if (next.previousPrice && next.price >= next.previousPrice) {
+        next.previousPrice = null;
+        next.priceReducedAt = null;
+      }
+      if (data.title !== current.title) next.slug = propertySlug(data.title, current.reference);
+      if (next.price !== current.price) {
+        next.priceHistory = [
+          ...current.priceHistory,
+          { at: new Date().toISOString(), from: current.price, to: next.price },
+        ];
+      }
+      const changes = diff(current, next);
+      delete changes.priceHistory;
+      if (!Object.keys(changes).length) return;
+      await save(next, "revert", changes);
+    },
+
     async listAudit(filter: AuditFilter = {}) {
       const all = await (await db()).getAllFromIndex("audit", "at");
       return all
@@ -510,4 +601,5 @@ export function createDemoRepository({ getActor, dbName }: Options): DemoReposit
       notify();
     },
   };
+  return repo;
 }

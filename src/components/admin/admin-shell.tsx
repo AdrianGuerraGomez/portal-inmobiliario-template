@@ -3,7 +3,9 @@
 import {
   Building2Icon,
   ChevronDownIcon,
+  ClipboardListIcon,
   ExternalLinkIcon,
+  HistoryIcon,
   InboxIcon,
   LogOutIcon,
   MenuIcon,
@@ -45,18 +47,28 @@ import { useSession } from "@/lib/data/use-session";
 import { ROLE_LABELS } from "@/lib/domain/audit";
 import { cn } from "@/lib/utils";
 
-const NAV = [
+const NAV: { href: string; label: string; icon: typeof Building2Icon; adminOnly?: boolean }[] = [
   { href: "/admin/inmuebles", label: "Inmuebles", icon: Building2Icon },
   { href: "/admin/contactos", label: "Contactos", icon: InboxIcon },
   { href: "/admin/contenido", label: "Contenido web", icon: PanelsTopLeftIcon },
+  { href: "/admin/actividad", label: "Actividad", icon: HistoryIcon, adminOnly: true },
+  { href: "/admin/resumen", label: "Resumen", icon: ClipboardListIcon, adminOnly: true },
   { href: "/admin/papelera", label: "Papelera", icon: Trash2Icon },
 ];
 
-function NavLinks({ onNavigate, vertical }: { onNavigate?: () => void; vertical?: boolean }) {
+function NavLinks({
+  onNavigate,
+  vertical,
+  isAdmin,
+}: {
+  onNavigate?: () => void;
+  vertical?: boolean;
+  isAdmin: boolean;
+}) {
   const pathname = usePathname();
   return (
     <nav aria-label="Panel" className={cn("flex gap-1", vertical && "flex-col")}>
-      {NAV.map(({ href, label, icon: Icon }) => {
+      {NAV.filter((n) => !n.adminOnly || isAdmin).map(({ href, label, icon: Icon }) => {
         const active = pathname.startsWith(href);
         return (
           <Link
@@ -122,7 +134,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
               </SheetHeader>
               <div className="px-4">
                 <Suspense>
-                  <NavLinks vertical onNavigate={() => setMenuOpen(false)} />
+                  <NavLinks vertical isAdmin={session?.role === "admin"} onNavigate={() => setMenuOpen(false)} />
                 </Suspense>
               </div>
             </SheetContent>
@@ -134,7 +146,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
 
           <div className="hidden md:block">
             <Suspense>
-              <NavLinks />
+              <NavLinks isAdmin={session?.role === "admin"} />
             </Suspense>
           </div>
 
