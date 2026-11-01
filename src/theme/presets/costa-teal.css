@@ -1,0 +1,23 @@
+/*
+ * Tema de ejemplo: Costa Teal
+ * Paleta "trust teal" sugerida por la skill ui-ux-pro-max para inmobiliarias.
+ */
+:root {
+  --brand-primary: #0f766e;
+  --brand-primary-foreground: #ffffff;
+  --brand-accent: #0369a1;
+  --brand-accent-foreground: #ffffff;
+  --brand-secondary: #ccfbf1;
+  --brand-secondary-foreground: #134e4a;
+
+  --brand-background: #f0fdfa;
+  --brand-foreground: #134e4a;
+  --brand-surface: #ffffff;
+
+  --status-available: #15803d;
+  --status-reserved: #b45309;
+  --status-sold: #b91c1c;
+  --price-drop: #dc2626;
+
+  --brand-radius: 0.875rem;
+}

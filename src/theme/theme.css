@@ -1,0 +1,5 @@
+/*
+ * Tema activo. Cambia esta línea para usar otro preset.
+ * Presets en src/theme/presets/. Fuentes en src/theme/fonts.ts.
+ */
+@import "./presets/casablanca.css";

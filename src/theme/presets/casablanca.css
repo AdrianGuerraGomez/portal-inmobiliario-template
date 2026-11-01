@@ -1,0 +1,33 @@
+/*
+ * Tema: Casablanca Inmobiliarias
+ * Paleta: https://coolors.co/ffe32e-fff197-fff8cb-ffffff-8294a0-435e70-042840
+ * Solo tokens de marca. El resto de colores se derivan en globals.css.
+ * Para un cliente nuevo: copia este archivo, cambia valores
+ * y apunta src/theme/theme.css al nuevo preset.
+ */
+:root {
+  /* Marca */
+  --brand-primary: #042840;                /* azul marino: botones, enlaces, cabecera */
+  --brand-primary-foreground: #ffffff;
+  --brand-accent: #ffe32e;                 /* amarillo: CTA y destacados */
+  --brand-accent-foreground: #042840;
+  --brand-secondary: #fff8cb;              /* crema: bloques suaves, etiquetas */
+  --brand-secondary-foreground: #042840;
+
+  /* Superficies */
+  --brand-background: #ffffff;
+  --brand-foreground: #042840;
+  --brand-surface: #ffffff;                /* tarjetas */
+
+  /* Estados de inmueble (llevan texto blanco: contraste ≥ 4.5:1) */
+  --status-available: oklch(0.52 0.12 155);
+  --status-reserved: oklch(0.55 0.12 70);
+  --status-sold: oklch(0.5 0.17 25);
+  --price-drop: oklch(0.52 0.19 25);
+
+  /* Forma */
+  --brand-radius: 0.5rem;
+
+  /* Resto de la paleta, para usos puntuales:
+     #fff197 amarillo claro · #8294a0 gris azulado · #435e70 pizarra */
+}
