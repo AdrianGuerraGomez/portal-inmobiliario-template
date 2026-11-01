@@ -3,10 +3,11 @@
 import { useId, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useSiteContent } from "@/lib/content/use-content";
 import { PURCHASE_COSTS_PCT, simulateMortgage } from "@/lib/domain/mortgage";
 import { formatPrice } from "@/lib/format";
 
-type Props = { initialPrice?: number; disclaimer: string };
+type Props = { initialPrice?: number };
 
 function NumberField({
   label,
@@ -64,7 +65,8 @@ function NumberField({
   );
 }
 
-export function MortgageCalculator({ initialPrice, disclaimer }: Props) {
+export function MortgageCalculator({ initialPrice }: Props) {
+  const { disclaimer } = useSiteContent().financing;
   const [price, setPrice] = useState(initialPrice && initialPrice > 0 ? initialPrice : 200_000);
   const [down, setDown] = useState(20);
   const [years, setYears] = useState(30);

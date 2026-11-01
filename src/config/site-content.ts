@@ -1,5 +1,6 @@
-// Textos e imágenes de la web por defecto.
-// En la Fase 4 serán editables desde el panel; estos valores quedan de respaldo.
+// Textos e imágenes de la web por defecto para este cliente.
+// Se editan desde el panel (Contenido web); estos valores quedan de respaldo.
+// Para añadir un hueco editable: ponlo aquí y declara su campo en src/lib/content/fields.ts.
 
 export const siteContent = {
   home: {
@@ -10,13 +11,9 @@ export const siteContent = {
     heroImageAlt: "Fachada de una vivienda unifamiliar blanca con jardín",
     featuredTitle: "Inmuebles destacados",
     values: [
-      { title: "Conocemos la zona", text: "Dos oficinas en Guadalajara y años vendiendo en cada barrio." },
-      { title: "Tasación sin coste", text: "Te decimos cuánto vale tu casa antes de ponerla a la venta." },
-      {
-        title: "Te ayudamos con la hipoteca",
-        text: "Buscamos contigo la mejor financiación.",
-        href: "/financiacion",
-      },
+      { title: "Conocemos la zona", text: "Dos oficinas en Guadalajara y años vendiendo en cada barrio.", href: "" },
+      { title: "Tasación sin coste", text: "Te decimos cuánto vale tu casa antes de ponerla a la venta.", href: "" },
+      { title: "Te ayudamos con la hipoteca", text: "Buscamos contigo la mejor financiación.", href: "/financiacion" },
     ],
     sellTitle: "¿Quieres vender tu casa?",
     sellText: "Te hacemos una valoración gratuita y nos encargamos de todo: fotos, visitas y papeleo.",

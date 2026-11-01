@@ -6,10 +6,12 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { brand } from "@/config/brand";
+import { useSiteContent } from "@/lib/content/use-content";
 import { SITE_NAV, telHref } from "./nav";
 
 export function MobileMenu() {
   const [open, setOpen] = useState(false);
+  const { offices } = useSiteContent().company;
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
@@ -34,13 +36,15 @@ export function MobileMenu() {
           ))}
         </nav>
         <div className="mt-auto space-y-2 p-4">
-          {brand.contact.offices.map((o) => (
-            <Button key={o.phone} asChild variant="cta" size="lg" className="h-12 w-full">
-              <a href={telHref(o.phone)}>
-                <PhoneIcon /> {o.phone}
-              </a>
-            </Button>
-          ))}
+          {offices
+            .filter((o) => o.phone)
+            .map((o) => (
+              <Button key={o.phone} asChild variant="cta" size="lg" className="h-12 w-full">
+                <a href={telHref(o.phone)}>
+                  <PhoneIcon /> {o.phone}
+                </a>
+              </Button>
+            ))}
         </div>
       </SheetContent>
     </Sheet>

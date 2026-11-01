@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { brand } from "@/config/brand";
 import { diff, type Actor, type AuditAction, type AuditEntry, type FieldChange } from "@/lib/domain/audit";
+import { EMPTY_CONTENT_STATE, type ContentOverrides, type ContentState } from "@/lib/content/defaults";
+import { defaultValue, isAdminOnly, LOCAL_ASSET_PREFIX, validateContent } from "@/lib/content/fields";
 import { DomainError } from "@/lib/domain/errors";
 import { leadInputSchema, type Lead } from "@/lib/domain/lead";
 import { assertFileAllowed, assertMediaCount } from "@/lib/domain/media-rules";
@@ -28,6 +30,17 @@ export type DemoRepository = Repository & {
 };
 
 const CHANNEL = "portal-inmobiliario-demo";
+const CONTENT_KEY = "content";
+
+// Solo se guarda lo que difiere del texto por defecto.
+function normalizeOverrides(overrides: ContentOverrides): ContentOverrides {
+  const out: ContentOverrides = {};
+  for (const [k, v] of Object.entries(overrides)) {
+    const value = v.trim();
+    if (value !== defaultValue(k)) out[k] = value;
+  }
+  return out;
+}
 
 function parseInput(data: unknown): PropertyData {
   const result = propertyInputSchema.safeParse(data);
@@ -90,6 +103,22 @@ export function createDemoRepository({ getActor, dbName }: Options): DemoReposit
       return d;
     });
     return dbPromise;
+  }
+
+  // URL temporal (blob:) de un archivo guardado en el navegador. Se reutiliza mientras dure la pestaña.
+  async function blobUrl(path: string): Promise<string> {
+    const cached = objectUrls.get(path);
+    if (cached) return cached;
+    const blob = await (await db()).get("blobs", path);
+    if (!blob) throw new DomainError("not_found", "Archivo no encontrado");
+    const url = URL.createObjectURL(new Blob([blob.data], { type: blob.type }));
+    objectUrls.set(path, url);
+    return url;
+  }
+
+  async function readContent(): Promise<ContentState> {
+    const stored = (await (await db()).get("meta", CONTENT_KEY)) as ContentState | undefined;
+    return stored ?? EMPTY_CONTENT_STATE;
   }
 
   async function mustGet(id: string): Promise<Property> {
@@ -327,13 +356,7 @@ export function createDemoRepository({ getActor, dbName }: Options): DemoReposit
     async mediaUrl(path, source) {
       if (source === "static") return path;
       if (source !== "local") throw new DomainError("validation", "Origen de archivo no disponible en la demo.");
-      const cached = objectUrls.get(path);
-      if (cached) return cached;
-      const blob = await (await db()).get("blobs", path);
-      if (!blob) throw new DomainError("not_found", "Archivo no encontrado");
-      const url = URL.createObjectURL(new Blob([blob.data], { type: blob.type }));
-      objectUrls.set(path, url);
-      return url;
+      return blobUrl(path);
     },
 
     async listAudit(filter: AuditFilter = {}) {
@@ -390,6 +413,79 @@ export function createDemoRepository({ getActor, dbName }: Options): DemoReposit
       await d.put("leads", next);
       notify();
       return next;
+    },
+
+    async getContentState() {
+      return readContent();
+    },
+
+    async saveContentDraft(overrides) {
+      const current = await readContent();
+      const next = normalizeOverrides(overrides);
+      validateContent(next);
+      // Los datos de la empresa solo los cambia un administrador.
+      const base = current.draft ?? current.published;
+      const touched = new Set([...Object.keys(base), ...Object.keys(next)].filter((k) => base[k] !== next[k]));
+      if (getActor().role !== "admin" && [...touched].some(isAdminOnly)) {
+        throw new DomainError("forbidden", "Solo un administrador puede cambiar los datos de la empresa.");
+      }
+      const state: ContentState = { ...current, draft: next, draftAt: new Date().toISOString() };
+      await (await db()).put("meta", state, CONTENT_KEY);
+      notify();
+      return state;
+    },
+
+    async publishContent() {
+      const current = await readContent();
+      if (!current.draft) return current;
+      const keys = new Set([...Object.keys(current.published), ...Object.keys(current.draft)]);
+      const changes: Record<string, FieldChange> = {};
+      for (const k of keys) {
+        const from = current.published[k] ?? defaultValue(k);
+        const to = current.draft[k] ?? defaultValue(k);
+        if (from !== to) changes[k] = { from, to };
+      }
+      const actor = getActor();
+      const state: ContentState = {
+        published: current.draft,
+        publishedAt: new Date().toISOString(),
+        publishedBy: actor.name,
+        draft: null,
+        draftAt: null,
+      };
+      const d = await db();
+      await d.put("meta", state, CONTENT_KEY);
+      await d.put("audit", {
+        id: crypto.randomUUID(),
+        at: nextAt(),
+        actor: { id: actor.id, name: actor.name, role: actor.role },
+        entity: "content",
+        entityId: "site",
+        entityLabel: "Contenido de la web",
+        action: "content_publish",
+        changes,
+      });
+      notify();
+      return state;
+    },
+
+    async discardContentDraft() {
+      const state: ContentState = { ...(await readContent()), draft: null, draftAt: null };
+      await (await db()).put("meta", state, CONTENT_KEY);
+      notify();
+      return state;
+    },
+
+    async uploadContentImage(file) {
+      if (!file.type.startsWith("image/")) throw new DomainError("file_type", "Sube una imagen.");
+      const id = crypto.randomUUID();
+      await (await db()).put("blobs", { id, data: await file.arrayBuffer(), type: file.type });
+      return `${LOCAL_ASSET_PREFIX}${id}`;
+    },
+
+    async contentImageUrl(value) {
+      if (!value.startsWith(LOCAL_ASSET_PREFIX)) return value;
+      return blobUrl(value.slice(LOCAL_ASSET_PREFIX.length));
     },
 
     subscribe(listener) {

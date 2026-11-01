@@ -12,7 +12,7 @@ export interface DemoSchema extends DBSchema {
   blobs: { key: string; value: StoredBlob };
   audit: { key: string; value: AuditEntry; indexes: { at: string } };
   leads: { key: string; value: Lead; indexes: { createdAt: string } };
-  meta: { key: string; value: string | number };
+  meta: { key: string; value: unknown };
 }
 
 export type DemoDB = IDBPDatabase<DemoSchema>;

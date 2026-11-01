@@ -1,6 +1,9 @@
+"use client";
+
 import { MapPinIcon, PhoneIcon } from "lucide-react";
 import Link from "next/link";
 import { brand } from "@/config/brand";
+import { useSiteContent } from "@/lib/content/use-content";
 import { SITE_NAV, telHref } from "./nav";
 import { SocialLinks } from "./social-links";
 
@@ -11,7 +14,7 @@ const LEGAL = [
 ];
 
 export function SiteFooter() {
-  const { offices, email } = brand.contact;
+  const { offices, email, social } = useSiteContent().company;
   return (
     <footer className="bg-primary text-primary-foreground">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-[1.3fr_0.7fr_2fr]">
@@ -23,7 +26,7 @@ export function SiteFooter() {
               {email}
             </a>
           )}
-          <SocialLinks className="pt-2" />
+          <SocialLinks social={social} className="pt-2" />
         </div>
         <nav aria-label="Pie de página">
           <ul className="space-y-2 text-sm">

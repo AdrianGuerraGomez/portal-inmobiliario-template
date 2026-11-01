@@ -1,4 +1,5 @@
 import type { AuditEntry } from "@/lib/domain/audit";
+import type { ContentOverrides, ContentState } from "@/lib/content/defaults";
 import type { Lead, LeadInput } from "@/lib/domain/lead";
 import type { Operation, Property, PropertyInput, PropertyStatus, PropertyType } from "@/lib/domain/property";
 
@@ -59,6 +60,15 @@ export interface Repository {
   createLead(input: LeadInput): Promise<Lead>;
   listLeads(): Promise<Lead[]>;
   setLeadStatus(id: string, status: Lead["status"]): Promise<Lead>;
+
+  // Contenido editable de la web (textos, imágenes, datos de empresa).
+  getContentState(): Promise<ContentState>;
+  saveContentDraft(overrides: ContentOverrides): Promise<ContentState>;
+  publishContent(): Promise<ContentState>;
+  discardContentDraft(): Promise<ContentState>;
+  // Sube una imagen ya procesada y devuelve el valor a guardar en el campo.
+  uploadContentImage(file: Blob): Promise<string>;
+  contentImageUrl(value: string): Promise<string>;
 
   // Avisa cuando cambian los datos (otra pestaña incluida).
   subscribe(listener: () => void): () => void;

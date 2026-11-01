@@ -23,6 +23,8 @@ npm run dev
 | Colores, radios, estados de inmueble | `src/theme/presets/<cliente>.css` |
 | Preset activo | `src/theme/theme.css` (una línea) |
 | Fuentes | `src/theme/fonts.ts` |
+| Textos e imágenes por defecto | `src/config/site-content.ts` |
+| Qué se puede editar desde el panel | `src/lib/content/fields.ts` |
 | Logo y favicon | `public/brand/`, `src/app/favicon.ico` |
 
 Los componentes solo usan clases de tema (`bg-primary`, `text-cta`, `bg-status-sold`…). Nunca colores a mano.
@@ -61,6 +63,6 @@ Para producción se añade una implementación con Supabase y se pone `NEXT_PUBL
 - [x] Fase 1 · Modelo de datos, datos de ejemplo y capa demo
 - [x] Fase 2 · Panel de inmuebles (login demo, listado, crear/editar, fotos y vídeo, rebajas, estados, papelera)
 - [x] Fase 3 · Web pública (portada, listados con filtros, ficha, contacto, legales, SEO) + bandeja de contactos
-- [ ] Fase 4 · Contenido editable
+- [x] Fase 4 · Contenido editable (textos, imagen de portada, datos de empresa; borrador, vista previa y publicar)
 - [ ] Fase 5 · Histórico de cambios
 - [ ] Fase 6 · Supabase y producción (cuando el cliente compre)

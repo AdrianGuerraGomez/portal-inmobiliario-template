@@ -1,12 +1,15 @@
+"use client";
+
 import { PhoneIcon } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { brand } from "@/config/brand";
+import { useSiteContent } from "@/lib/content/use-content";
 import { MobileMenu } from "./mobile-menu";
 import { SITE_NAV, telHref } from "./nav";
 
 export function SiteHeader() {
-  const phone = brand.contact.offices[0]?.phone;
+  const phone = useSiteContent().company.offices[0]?.phone;
   return (
     <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-6 px-4 sm:px-6">

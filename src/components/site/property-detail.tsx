@@ -21,6 +21,7 @@ import { StatusBadge } from "@/components/property/status-badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { brand } from "@/config/brand";
+import { useSiteContent } from "@/lib/content/use-content";
 import { useRepoQuery } from "@/lib/data/provider";
 import {
   ENERGY_LABELS,
@@ -106,6 +107,7 @@ function Similar({ property }: { property: Property }) {
 export function PropertyDetail() {
   const { slug } = useParams<{ slug: string }>();
   const { data: property, loading } = useRepoQuery((r) => r.getPropertyBySlug(slug), [slug]);
+  const { company } = useSiteContent();
 
   if (loading && property === undefined) {
     return (
@@ -135,7 +137,7 @@ export function PropertyDetail() {
   const video = media.find((m) => m.kind === "video");
   const closed = p.status === "vendido" || p.status === "alquilado";
   const listUrl = p.operation === "alquiler" ? "/alquiler" : "/venta";
-  const phone = brand.contact.offices[0]?.phone;
+  const phone = company.offices[0]?.phone;
   // En el navegador, la dirección real de la página.
   const pageUrl = `${typeof window !== "undefined" ? window.location.origin : siteUrl()}/inmueble/${p.slug}`;
 
@@ -267,10 +269,10 @@ export function PropertyDetail() {
                 </a>
               </Button>
             )}
-            {brand.contact.whatsapp && (
+            {company.whatsapp && (
               <Button asChild variant="outline" size="lg" className="h-12 w-full text-base">
                 <a
-                  href={`https://wa.me/${brand.contact.whatsapp}?text=${encodeURIComponent(`Hola, me interesa ${p.reference}`)}`}
+                  href={`https://wa.me/${company.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(`Hola, me interesa ${p.reference}`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >

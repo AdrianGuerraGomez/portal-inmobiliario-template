@@ -165,6 +165,47 @@ describe("contactos", () => {
   });
 });
 
+describe("contenido editable", () => {
+  it("borrador → publicar, guardando solo lo que cambia y dejando rastro", async () => {
+    await repo.saveContentDraft({
+      "home.title": "Tu casa en Guadalajara",
+      "home.eyebrow": "Inmobiliaria en Guadalajara",
+    });
+    let state = await repo.getContentState();
+    expect(state.published).toEqual({});
+    expect(state.draft).toEqual({ "home.title": "Tu casa en Guadalajara" }); // eyebrow = valor por defecto
+    state = await repo.publishContent();
+    expect(state.published["home.title"]).toBe("Tu casa en Guadalajara");
+    expect(state.draft).toBeNull();
+    const [entry] = await repo.listAudit({ entityId: "site" });
+    expect(entry.action).toBe("content_publish");
+    expect(entry.changes["home.title"]).toEqual({
+      from: "Encuentra tu casa en Guadalajara",
+      to: "Tu casa en Guadalajara",
+    });
+  });
+
+  it("rechaza campos que no existen, textos largos o vacíos", async () => {
+    await expect(repo.saveContentDraft({ "home.inventado": "x" })).rejects.toThrow(/no se puede editar/);
+    await expect(repo.saveContentDraft({ "home.title": "x".repeat(61) })).rejects.toThrow(/máximo 60/);
+    await expect(repo.saveContentDraft({ "home.title": "  " })).rejects.toThrow(/vacío/);
+    await expect(repo.saveContentDraft({ "company.social.facebook": "facebook.com/x" })).rejects.toThrow(/https/);
+  });
+
+  it("un editor no puede cambiar los datos de la empresa", async () => {
+    actor = DEMO_USERS[1];
+    await expect(repo.saveContentDraft({ "company.offices.0.phone": "949 000 000" })).rejects.toThrow(/administrador/);
+    await expect(repo.saveContentDraft({ "home.title": "Otro título" })).resolves.toBeTruthy();
+  });
+
+  it("descartar borrador deja lo publicado", async () => {
+    await repo.saveContentDraft({ "contact.title": "Escríbenos" });
+    const state = await repo.discardContentDraft();
+    expect(state.draft).toBeNull();
+    expect(state.published).toEqual({});
+  });
+});
+
 describe("histórico", () => {
   it("registra quién cambió qué, con antes y después", async () => {
     const p = await repo.createProperty(input);

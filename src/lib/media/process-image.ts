@@ -51,3 +51,24 @@ export async function processImage(original: File): Promise<ProcessedImage> {
   bitmap.close();
   return result;
 }
+
+// Recorta al centro a una proporción fija (p. ej. 16:9 para la portada) y optimiza.
+export async function processCroppedImage(original: File, aspect: number): Promise<ProcessedImage> {
+  const base = await processImage(original);
+  const bitmap = await createImageBitmap(base.file);
+  let w = bitmap.width;
+  let h = Math.round(w / aspect);
+  if (h > bitmap.height) {
+    h = bitmap.height;
+    w = Math.round(h * aspect);
+  }
+  const canvas = document.createElement("canvas");
+  canvas.width = w;
+  canvas.height = h;
+  canvas.getContext("2d")!.drawImage(bitmap, (bitmap.width - w) / 2, (bitmap.height - h) / 2, w, h, 0, 0, w, h);
+  bitmap.close();
+  const blob = await new Promise<Blob>((resolve, reject) =>
+    canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("No se pudo recortar la imagen"))), "image/webp", 0.82),
+  );
+  return { file: new File([blob], base.file.name, { type: "image/webp" }), width: w, height: h };
+}

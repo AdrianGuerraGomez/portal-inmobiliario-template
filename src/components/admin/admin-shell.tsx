@@ -7,6 +7,7 @@ import {
   InboxIcon,
   LogOutIcon,
   MenuIcon,
+  PanelsTopLeftIcon,
   RotateCcwIcon,
   Trash2Icon,
   UsersIcon,
@@ -47,6 +48,7 @@ import { cn } from "@/lib/utils";
 const NAV = [
   { href: "/admin/inmuebles", label: "Inmuebles", icon: Building2Icon },
   { href: "/admin/contactos", label: "Contactos", icon: InboxIcon },
+  { href: "/admin/contenido", label: "Contenido web", icon: PanelsTopLeftIcon },
   { href: "/admin/papelera", label: "Papelera", icon: Trash2Icon },
 ];
 

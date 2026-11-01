@@ -3,20 +3,22 @@ import { brand } from "@/config/brand";
 import { cn } from "@/lib/utils";
 
 // Iconos de marca de Simple Icons (licencia CC0). Lucide ya no incluye logos de marcas.
-const NETWORKS: { key: keyof typeof brand.contact.social; label: string; icon: SimpleIcon }[] = [
+type Social = { facebook: string; instagram: string };
+
+const NETWORKS: { key: keyof Social; label: string; icon: SimpleIcon }[] = [
   { key: "facebook", label: "Facebook", icon: siFacebook },
   { key: "instagram", label: "Instagram", icon: siInstagram },
 ];
 
-export function SocialLinks({ className }: { className?: string }) {
-  const links = NETWORKS.filter((n) => brand.contact.social[n.key]);
+export function SocialLinks({ social, className }: { social: Social; className?: string }) {
+  const links = NETWORKS.filter((n) => social[n.key]);
   if (!links.length) return null;
   return (
     <ul className={cn("flex gap-3", className)}>
       {links.map((n) => (
         <li key={n.key}>
           <a
-            href={brand.contact.social[n.key]}
+            href={social[n.key]}
             target="_blank"
             rel="noopener noreferrer"
             aria-label={`${brand.name} en ${n.label}`}
