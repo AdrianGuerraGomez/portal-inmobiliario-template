@@ -197,7 +197,10 @@ export function createDemoRepository({ getActor, dbName }: Options): DemoReposit
 
       if (data.title !== current.title) next.slug = propertySlug(data.title, current.reference);
       if (data.price !== current.price) {
-        next.priceHistory = [...current.priceHistory, { at: new Date().toISOString(), from: current.price, to: data.price }];
+        next.priceHistory = [
+          ...current.priceHistory,
+          { at: new Date().toISOString(), from: current.price, to: data.price },
+        ];
         // Si sube por encima del precio anterior, ya no es rebaja.
         if (current.previousPrice && data.price >= current.previousPrice) {
           next.previousPrice = null;
@@ -217,7 +220,9 @@ export function createDemoRepository({ getActor, dbName }: Options): DemoReposit
       if (closed && status !== CLOSED_STATUS[current.operation]) {
         throw new DomainError(
           "validation",
-          current.operation === "venta" ? "Un inmueble en venta se marca como vendido." : "Un inmueble en alquiler se marca como alquilado.",
+          current.operation === "venta"
+            ? "Un inmueble en venta se marca como vendido."
+            : "Un inmueble en alquiler se marca como alquilado.",
         );
       }
       if (status === current.status) return current;

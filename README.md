@@ -59,7 +59,7 @@ Para producción se añade una implementación con Supabase y se pone `NEXT_PUBL
 
 - [x] Fase 0 · Preparación y sistema de tema
 - [x] Fase 1 · Modelo de datos, datos de ejemplo y capa demo
-- [ ] Fase 2 · Panel de inmuebles
+- [x] Fase 2 · Panel de inmuebles (login demo, listado, crear/editar, fotos y vídeo, rebajas, estados, papelera)
 - [ ] Fase 3 · Web pública
 - [ ] Fase 4 · Contenido editable
 - [ ] Fase 5 · Histórico de cambios

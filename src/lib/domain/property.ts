@@ -103,11 +103,7 @@ const optionalNumber = (schema: z.ZodNumber) => schema.nullable().default(null);
 
 // Lo que rellena el formulario del panel.
 export const propertyInputSchema = z.object({
-  title: z
-    .string()
-    .trim()
-    .min(10, "El título debe tener al menos 10 caracteres")
-    .max(120, "Máximo 120 caracteres"),
+  title: z.string().trim().min(10, "El título debe tener al menos 10 caracteres").max(120, "Máximo 120 caracteres"),
   description: z
     .string()
     .trim()

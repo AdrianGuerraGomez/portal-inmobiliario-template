@@ -9,6 +9,11 @@ export const DEMO_USERS: Actor[] = [
 ];
 
 const KEY = "portal-demo-session";
+export const SESSION_EVENT = "portal-demo-session-change";
+
+function emit() {
+  if (typeof window !== "undefined") window.dispatchEvent(new Event(SESSION_EVENT));
+}
 
 function storage(): Storage | null {
   try {
@@ -35,6 +40,7 @@ export function signInDemo(userId: string): Actor {
   } catch {
     // Sin almacenamiento (modo privado): la sesión dura lo que la pestaña.
   }
+  emit();
   return user;
 }
 
@@ -44,6 +50,7 @@ export function signOutDemo() {
   } catch {
     // nada que limpiar
   }
+  emit();
 }
 
 // Actor para el histórico. Sin sesión (web pública) no se escribe nada,

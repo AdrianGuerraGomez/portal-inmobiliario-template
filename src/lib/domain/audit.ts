@@ -2,6 +2,8 @@
 
 export type Role = "admin" | "editor";
 
+export const ROLE_LABELS: Record<Role, string> = { admin: "Administrador", editor: "Editor" };
+
 export type Actor = {
   id: string;
   name: string;

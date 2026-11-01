@@ -1,11 +1,5 @@
 import type { AuditEntry } from "@/lib/domain/audit";
-import type {
-  Operation,
-  Property,
-  PropertyInput,
-  PropertyStatus,
-  PropertyType,
-} from "@/lib/domain/property";
+import type { Operation, Property, PropertyInput, PropertyStatus, PropertyType } from "@/lib/domain/property";
 
 // Contrato de la capa de datos. Hoy: demo en el navegador.
 // Mañana: Supabase. Las pantallas solo conocen esta interfaz.
