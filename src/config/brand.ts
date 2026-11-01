@@ -9,6 +9,7 @@ export type BrandConfig = {
   description: string;
   locale: string;
   currency: string;
+  referencePrefix: string;
   logo: { src: string; alt: string; width: number; height: number };
   defaults: {
     phone: string;
@@ -37,6 +38,7 @@ export const brand: BrandConfig = {
   description: "Pisos, casas y locales en venta y alquiler en Guadalajara.",
   locale: "es-ES",
   currency: "EUR",
+  referencePrefix: "CB",
   logo: { src: "/brand/logo.svg", alt: "Casablanca Inmobiliarias", width: 160, height: 40 },
   defaults: {
     phone: "",

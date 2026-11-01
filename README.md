@@ -44,12 +44,23 @@ supabase/
   migrations/       esquema versionado
 ```
 
+## Modo demo
+
+Con `NEXT_PUBLIC_DEMO_MODE=true` (por defecto) no hace falta base de datos:
+
+- Inmuebles de ejemplo en `src/lib/data/demo/seed.ts`.
+- Los cambios se guardan en el navegador de cada visitante (IndexedDB).
+- Login falso con dos usuarios (admin y editor) en `src/lib/data/demo/session.ts`.
+
+Las pantallas solo usan la interfaz `Repository` (`src/lib/data/repository.ts`).
+Para producción se añade una implementación con Supabase y se pone `NEXT_PUBLIC_DEMO_MODE=false`.
+
 ## Fases
 
 - [x] Fase 0 · Preparación y sistema de tema
-- [ ] Fase 1 · Base de datos y seguridad (RLS)
+- [x] Fase 1 · Modelo de datos, datos de ejemplo y capa demo
 - [ ] Fase 2 · Panel de inmuebles
 - [ ] Fase 3 · Web pública
 - [ ] Fase 4 · Contenido editable
-- [ ] Fase 5 · Histórico de cambios y resumen semanal
-- [ ] Fase 6 · Producción
+- [ ] Fase 5 · Histórico de cambios
+- [ ] Fase 6 · Supabase y producción (cuando el cliente compre)
